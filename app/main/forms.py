@@ -2,6 +2,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
+class MudarNome(FlaskForm):
+    novo_nome = StringField()
+    salva = SubmitField('Salvar')
 
 class NameForm(FlaskForm):
     name = StringField('Qual é o seu nome?', validators=[DataRequired()])

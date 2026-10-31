@@ -7,26 +7,48 @@
 <div class="page-header">
     <h1>Hello, {% if name %}{{ name }}{% else %}Stranger{% endif %}!</h1>
     {% if not known %}
-    <p>Pleased to meet you!</p>
+    <p>Prazer em conhecê-lo!</p>
+    <p>E-mail enviado para o Administrador do sistema, notificando o cadastro de um novo usuário.</p>
     {% else %}
     <p>Happy to see you again!</p>
     {% endif %}
     {{ wtf.quick_form(form) }}
+    <h1>Relação de usuários cadastrados</h1>
     <table class="table mt-3">
-        <thead>
-            <tr>
-                <th>Nome do usuário</th>
-                <th>Função</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.role.name if user.role else 'User' }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <thead>
+        <tr>
+            <th>Nome do usuário</th>
+            <th>Função</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>
+                {% if edit_id == user.id %}
+                    <!-- SE ESTIVER A SER EDITADO: Mostra o formulário de mudança -->
+                    <form method="POST" class="form-inline">
+                        {{ form_editar.hidden_tag() }}
+                        <div class="form-group">
+                            {{ form_editar.novo_nome(value=user.username, class="form-control input-sm") }}
+                        </div>
+                        {{ form_editar.salva(class="btn btn-success btn-sm") }}
+                        <!-- Botão Cancelar que apenas recarrega a página index sem o parâmetro edit -->
+                        <a href="{{ url_for('main.index') }}" class="btn btn-secondary btn-sm">Cancelar</a>
+                    </form>
+                {% else %}
+                    {{ user.username }}
+                    <a class="btn btn-default btn-sm" href="{{ url_for('main.index', edit=user.id) }}">Editar</a>
+                {% endif %}
+            </td>
+            <td>{{ user.role.name if user.role else 'User' }}</td>
+            <td>
+                <a class="btn btn-danger btn-sm" href="{{ url_for('main.index', delete=user.id) }}">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 </div>
 {% endblock %}
